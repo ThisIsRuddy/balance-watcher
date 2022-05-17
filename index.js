@@ -47,7 +47,7 @@ const execute = async () => {
 
     if (balance >= THRESHOLD) {
       canClaim = true;
-      console.info(`[${new Date().toLocaleString()}] Claim threshold reached: ${balance.toFixed(2)}`);
+      console.info(`[${new Date().toLocaleString()}] Desired balance reached: ${balance.toFixed(2)}`);
 
       if (NOTIFY) {
         console.info(`[${new Date().toLocaleString()}] Notification dialog command sent.`);
