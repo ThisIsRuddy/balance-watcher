@@ -20,7 +20,7 @@ if (NOTIFY) {
   beep(3);
 }
 
-console.info(`[${new Date().toLocaleString()}] Waiting for pool to reach ${THRESHOLD}...`);
+console.info(`[${new Date().toLocaleString()}] Waiting for balance to reach ${THRESHOLD}...`);
 
 const getTokenBalance = async () => {
 
@@ -57,19 +57,19 @@ const execute = async () => {
         console.info(`[${new Date().toLocaleString()}] Notification dialog command sent.`);
         beep(3);
         dialog.showSync({
-          msg: `Reward pool balance: ${balance.toFixed(2)}
+          msg: `Balance: ${balance.toFixed(2)}
   Go claim/compound!`,
-          title: 'Rewards Pool Balance',
+          title: 'Address Balance',
           icon: dialog.INFO,
           buttons: dialog.OK,
           defaultButton: dialog.RIGHT,
         })
       }
     } else if (canClaim) {
-      console.info(`[${new Date().toLocaleString()}] Pool is now depleted: ${balance.toFixed(2)}`);
+      console.warn(`[${new Date().toLocaleString()}] Balance is now depleted: ${balance.toFixed(2)}`);
       canClaim = false;
     } else
-      console.info(`[${new Date().toLocaleString()}] Pool balance changed: ${balance.toFixed(2)}`);
+      console.info(`[${new Date().toLocaleString()}] Balance has updated: ${balance.toFixed(2)}`);
 
     previousBalance = balance;
   } catch (e) {
