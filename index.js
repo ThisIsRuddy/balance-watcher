@@ -1,4 +1,5 @@
 const axios = require('axios');
+const beep = require('beepbeep');
 const dialog = require('node-native-dialog');
 
 const API_URI = 'https://api.snowtrace.io/api';
@@ -51,6 +52,7 @@ const execute = async () => {
 
       if (NOTIFY) {
         console.info(`[${new Date().toLocaleString()}] Notification dialog command sent.`);
+        beep(3);
         dialog.showSync({
           msg: `Reward pool balance: ${balance.toFixed(2)}
   Go claim/compound!`,
@@ -58,7 +60,7 @@ const execute = async () => {
           icon: dialog.INFO,
           buttons: dialog.OK,
           defaultButton: dialog.RIGHT,
-        });
+        })
       }
     } else if (canClaim) {
       console.info(`[${new Date().toLocaleString()}] Pool is now depleted: ${balance.toFixed(2)}`);
