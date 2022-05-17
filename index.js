@@ -14,8 +14,11 @@ if (!process.argv[2])
 const THRESHOLD = process.argv[2];
 const NOTIFY = !process.argv[3];
 
-if (NOTIFY)
+if (NOTIFY) {
   console.info(`[${new Date().toLocaleString()}] Notification alerts are enabled!`);
+  console.info(`[${new Date().toLocaleString()}] Beep test, BEEP, BEEP, BEEP!`);
+  beep(3);
+}
 
 console.info(`[${new Date().toLocaleString()}] Waiting for pool to reach ${THRESHOLD}PM...`);
 
