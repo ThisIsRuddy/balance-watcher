@@ -1,52 +1,47 @@
+require('dotenv').config()
 const axios = require('axios');
 const beep = require('beepbeep');
 const dialog = require('node-native-dialog');
 
-const API_URI = 'https://api.snowtrace.io/api';
-const CONTRACT_ADDR = '0x490bf3ABcAb1fB5c88533d850F2a8d6D38298465';
-const WALLET_ADDR = '0xc8f1baa85f4e3fc8cbc71c12706ec5c64640f0e6';
-const API_KEY = 'ENTER_SNOWTRACE_API_KEY_HERE';
-const DIVISOR = 1000000000000000000;
+if (!process.argv[3])
+  throw new Error("You must supply a balance threshold. E.g 'yarn start 25'");
 
-if (!process.argv[2])
-  throw new Error("You must supply a threshold.");
+const BALANCE_THRESHOLD = process.argv[3];
+const ALERT_MODE = process.argv[2];
 
-const THRESHOLD = process.argv[2];
-const ALERT = process.argv[3] ? process.argv[3] : 'both';
-
-if (ALERT === 'silent')
+if (ALERT_MODE === 'silent')
   console.info(`[${new Date().toLocaleString()}] Running in silent mode! SSSSHHHHHHH.`);
 
-if (ALERT === 'both' || ALERT === 'dialog')
+if (ALERT_MODE === 'both' || ALERT_MODE === 'dialog')
   console.info(`[${new Date().toLocaleString()}] Dialog alerts are enabled!`);
 
-if (ALERT === 'both' || ALERT === 'beep') {
-  console.info(`[${new Date().toLocaleString()}] Beeps enabled! Beep test, BEEP, BEEP, BEEP!`);
-  beep(3);
+if (ALERT_MODE === 'both' || ALERT_MODE === 'beep') {
+  console.info(`[${new Date().toLocaleString()}] Beeps enabled! Beep test, BEEP, BEEP!`);
+  beep(2);
 }
 
-console.info(`[${new Date().toLocaleString()}] Waiting for balance to reach ${THRESHOLD}...`);
+console.info(`[${new Date().toLocaleString()}] Waiting for balance to reach ${BALANCE_THRESHOLD}...`);
 
 const getTokenBalance = async () => {
 
-  const {data: {result}} = await axios.get(API_URI, {
+  const {data: {result}} = await axios.get(process.env.API_URI, {
     params: {
       module: 'account',
       action: 'tokenbalance',
       tag: 'latest',
-      contractaddress: CONTRACT_ADDR,
-      address: WALLET_ADDR,
-      apikey: API_KEY
+      contractaddress: process.env.CONTRACT_ADDR,
+      address: process.env.WALLET_ADDR,
+      apikey: process.env.API_KEY
     }
   });
 
-  const balance = result / DIVISOR;
+  const balance = result / process.env.TOKEN_DIVISOR;
   return balance;
 }
 
 const runAlerts = async (balance) => {
 
-  if (ALERT === 'both' || ALERT === 'dialog')
+  if (ALERT_MODE === 'both' || ALERT_MODE === 'dialog')
     await dialog.show({
       msg: `Balance: ${balance.toFixed(2)}
   Go claim/compound!`,
@@ -56,8 +51,8 @@ const runAlerts = async (balance) => {
       defaultButton: dialog.RIGHT,
     })
 
-  if (ALERT === 'both' || ALERT === 'beep')
-    beep(3);
+  if (ALERT_MODE === 'both' || ALERT_MODE === 'beep')
+    beep(process.env.BEEP_COUNT);
 }
 
 let previousBalance = 0;
@@ -68,13 +63,13 @@ const execute = async () => {
     const balance = await getTokenBalance();
 
     if (previousBalance === balance)
-      return setTimeout(execute, 2000);
+      return setTimeout(execute, process.env.REFRESH_MILLIS);
 
-    if (balance >= THRESHOLD) {
+    if (balance >= BALANCE_THRESHOLD) {
       canClaim = true;
       console.info(`[${new Date().toLocaleString()}] Desired balance reached: ${balance.toFixed(2)}`);
 
-      if (ALERT !== 'silent')
+      if (ALERT_MODE !== 'silent')
         await runAlerts(balance);
 
     } else if (canClaim) {
@@ -89,7 +84,12 @@ const execute = async () => {
     console.error(e.message);
   }
 
-  return setTimeout(execute, 2000);
+  if (process.env.STOP_WHEN_REACHED) {
+    console.error(`[${new Date().toLocaleString()}] Setting STOP_WHEN_REACHED is enabled, stopping script.`);
+    process.exit(0);
+  }
+
+  return setTimeout(execute, process.env.REFRESH_MILLIS);
 }
 
 execute()
