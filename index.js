@@ -12,11 +12,16 @@ if (!process.argv[2])
   throw new Error("You must supply a threshold.");
 
 const THRESHOLD = process.argv[2];
-const NOTIFY = !process.argv[3];
+const ALERT = process.argv[3] ? process.argv[3] : 'both';
 
-if (NOTIFY) {
-  console.info(`[${new Date().toLocaleString()}] Notification alerts are enabled!`);
-  console.info(`[${new Date().toLocaleString()}] Beep test, BEEP, BEEP, BEEP!`);
+if (ALERT === 'silent')
+  console.info(`[${new Date().toLocaleString()}] Running in silent mode! SSSSHHHHHHH.`);
+
+if (ALERT === 'both' || ALERT === 'dialog')
+  console.info(`[${new Date().toLocaleString()}] Dialog alerts are enabled!`);
+
+if (ALERT === 'both' || ALERT === 'beep') {
+  console.info(`[${new Date().toLocaleString()}] Beeps enabled! Beep test, BEEP, BEEP, BEEP!`);
   beep(3);
 }
 
@@ -39,6 +44,22 @@ const getTokenBalance = async () => {
   return balance;
 }
 
+const runAlerts = async (balance) => {
+
+  if (ALERT === 'both' || ALERT === 'dialog')
+    await dialog.show({
+      msg: `Balance: ${balance.toFixed(2)}
+  Go claim/compound!`,
+      title: 'Address Balance',
+      icon: dialog.INFO,
+      buttons: dialog.OK,
+      defaultButton: dialog.RIGHT,
+    })
+
+  if (ALERT === 'both' || ALERT === 'beep')
+    beep(3);
+}
+
 let previousBalance = 0;
 let canClaim = false;
 const execute = async () => {
@@ -53,18 +74,9 @@ const execute = async () => {
       canClaim = true;
       console.info(`[${new Date().toLocaleString()}] Desired balance reached: ${balance.toFixed(2)}`);
 
-      if (NOTIFY) {
-        console.info(`[${new Date().toLocaleString()}] Notification dialog command sent.`);
-        beep(3);
-        dialog.showSync({
-          msg: `Balance: ${balance.toFixed(2)}
-  Go claim/compound!`,
-          title: 'Address Balance',
-          icon: dialog.INFO,
-          buttons: dialog.OK,
-          defaultButton: dialog.RIGHT,
-        })
-      }
+      if (ALERT !== 'silent')
+        await runAlerts(balance);
+
     } else if (canClaim) {
       console.warn(`[${new Date().toLocaleString()}] Balance is now depleted: ${balance.toFixed(2)}`);
       canClaim = false;
