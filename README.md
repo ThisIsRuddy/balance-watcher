@@ -1,5 +1,18 @@
 ### CLI Script for watching PM Reward Pool
+A script used for watching the balance of a contract token address. Alerts via beep & dialog prompt when desired threshold is reached.
 
-`yarn start 30` - with alert (prompt will prevent the script continuing)
+`yarn install`
+Add snowtrace.io API_KEY to `index.js`
 
-`yarn start 30 false` - without alert
+--- 
+### Alert when desired balance reached
+`yarn start DESIRED_BALANCE`
+
+e.g.
+`yarn start 25`
+
+### Silent mode
+`yarn start DESIRED_BALANCE false`
+
+e.g.
+`yarn start 25 false`
