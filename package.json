@@ -1,0 +1,13 @@
+{
+  "name": "rewards-watcher",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "node-native-dialog": "^1.0.1"
+  }
+}
