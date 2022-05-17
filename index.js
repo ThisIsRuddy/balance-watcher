@@ -72,7 +72,7 @@ const execute = async () => {
       if (ALERT_MODE !== 'silent')
         await runAlerts(balance);
 
-      if (process.env.STOP_WHEN_REACHED) {
+      if (process.env.STOP_WHEN_REACHED === 1) {
         console.error(`[${new Date().toLocaleString()}] Setting STOP_WHEN_REACHED is enabled, stopping script.`);
         process.exit(0);
       }
