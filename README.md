@@ -7,9 +7,11 @@ The script can be adjusted to watch other token address balances but currently t
 
 ### Installation
 
-`yarn install` or `npm install`
-Copy `.env.SAMPLE` to `.env`
-Update settings in `.env`
+1. `yarn install` or `npm install`
+
+2. Copy `.env.SAMPLE` to `.env`
+
+3. Update settings in `.env`
 
 --- 
 
