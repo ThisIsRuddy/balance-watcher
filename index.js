@@ -72,6 +72,11 @@ const execute = async () => {
       if (ALERT_MODE !== 'silent')
         await runAlerts(balance);
 
+      if (process.env.STOP_WHEN_REACHED) {
+        console.error(`[${new Date().toLocaleString()}] Setting STOP_WHEN_REACHED is enabled, stopping script.`);
+        process.exit(0);
+      }
+
     } else if (canClaim) {
       console.warn(`[${new Date().toLocaleString()}] Balance is now depleted: ${balance.toFixed(2)}`);
       canClaim = false;
@@ -82,11 +87,6 @@ const execute = async () => {
   } catch (e) {
     console.error(`[${new Date().toLocaleString()}] Failed to retrieve token balance.`);
     console.error(e.message);
-  }
-
-  if (process.env.STOP_WHEN_REACHED) {
-    console.error(`[${new Date().toLocaleString()}] Setting STOP_WHEN_REACHED is enabled, stopping script.`);
-    process.exit(0);
   }
 
   return setTimeout(execute, process.env.REFRESH_MILLIS);
