@@ -20,7 +20,7 @@ if (NOTIFY) {
   beep(3);
 }
 
-console.info(`[${new Date().toLocaleString()}] Waiting for pool to reach ${THRESHOLD}PM...`);
+console.info(`[${new Date().toLocaleString()}] Waiting for pool to reach ${THRESHOLD}...`);
 
 const getTokenBalance = async () => {
 
@@ -59,7 +59,7 @@ const execute = async () => {
         dialog.showSync({
           msg: `Reward pool balance: ${balance.toFixed(2)}
   Go claim/compound!`,
-          title: 'PM Rewards Pool',
+          title: 'Rewards Pool Balance',
           icon: dialog.INFO,
           buttons: dialog.OK,
           defaultButton: dialog.RIGHT,
