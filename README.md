@@ -1,4 +1,4 @@
-### CLI Script for watching PM Reward Pool
+## Contract Token Address Balance Watcher
 A script used for watching the balance of a contract token address. Alerts via beep & dialog prompt when desired threshold is reached.
 
 `yarn install`
